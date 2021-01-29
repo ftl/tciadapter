@@ -15,17 +15,18 @@ import (
 	tci "github.com/ftl/tci/client"
 )
 
-func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan struct{}, trace bool) (*Adapter, error) {
+func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan struct{}, trace bool, noDigimodes bool) (*Adapter, error) {
 	listener, err := net.Listen("tcp", localAddress)
 	if err != nil {
 		return nil, fmt.Errorf("cannot open local port %s: %w", localAddress, err)
 	}
 
 	result := &Adapter{
-		listener: listener,
-		trxData:  newTRXData(trx),
-		closed:   make(chan struct{}),
-		trace:    trace,
+		listener:    listener,
+		trxData:     newTRXData(trx),
+		closed:      make(chan struct{}),
+		trace:       trace,
+		noDigimodes: noDigimodes,
 	}
 	result.tciClient = tci.KeepOpen(tciHost, 10*time.Second)
 	result.tciClient.Notify(result.trxData)
@@ -47,11 +48,12 @@ func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan stru
 }
 
 type Adapter struct {
-	listener  net.Listener
-	tciClient *tci.Client
-	trxData   *TRXData
-	closed    chan struct{}
-	trace     bool
+	listener    net.Listener
+	tciClient   *tci.Client
+	trxData     *TRXData
+	closed      chan struct{}
+	trace       bool
+	noDigimodes bool
 }
 
 func (a *Adapter) run() {
@@ -76,6 +78,7 @@ func (a *Adapter) run() {
 			adapterClosed: a.closed,
 			closed:        make(chan struct{}),
 			trace:         a.trace,
+			noDigimodes:   a.noDigimodes,
 		}
 		go conn.run()
 		go func() {
@@ -110,6 +113,7 @@ type inboundConnection struct {
 	adapterClosed <-chan struct{}
 	closed        chan struct{}
 	trace         bool
+	noDigimodes   bool
 }
 
 func (c *inboundConnection) run() {
@@ -193,7 +197,7 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 		if len(req.Args) < 2 {
 			return protocol.NoResponse, fmt.Errorf("set_mode: no arguments")
 		}
-		mode := hamlibToTCIMode[hamlib.Mode(req.Args[0])]
+		mode := c.overrideDigimode(hamlibToTCIMode[hamlib.Mode(req.Args[0])])
 		// passband, err := strconv.Atoi(req.Args[1]) // TODO also take the passband into account
 		err := c.tciClient.SetMode(c.trxData.trx, mode)
 		if err != nil {
@@ -261,6 +265,20 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 		return protocol.OKResponse(req.Key()), nil
 	default:
 		return protocol.NoResponse, fmt.Errorf("unsupported request: %v", req.LongFormat())
+	}
+}
+
+func (c *inboundConnection) overrideDigimode(mode tci.Mode) tci.Mode {
+	if !c.noDigimodes {
+		return mode
+	}
+	switch mode {
+	case tci.ModeDIGL:
+		return tci.ModeLSB
+	case tci.ModeDIGU:
+		return tci.ModeUSB
+	default:
+		return mode
 	}
 }
 

@@ -22,6 +22,7 @@ var rootFlags = struct {
 	tciHost      *string
 	trx          *int
 	trace        *bool
+	noDigimodes  *bool
 }{}
 
 var rootCmd = &cobra.Command{
@@ -42,10 +43,17 @@ func init() {
 	rootFlags.tciHost = rootCmd.PersistentFlags().StringP("tci_host", "t", "localhost:40001", "Connect the adapter to this TCI host")
 	rootFlags.trx = rootCmd.PersistentFlags().IntP("trx", "x", 0, "Use this TRX of the TCI host")
 	rootFlags.trace = rootCmd.PersistentFlags().BoolP("trace", "", false, "Trace the Hamlib set commands on the console")
+	rootFlags.noDigimodes = rootCmd.PersistentFlags().BoolP("no_digimodes", "d", false, "Use LSB/USB instead of the digital modes DIGL/DIGU")
 }
 
 func root(cmd *cobra.Command, args []string) {
 	log.Print("TCI-Hamlib Adapter")
+	if *rootFlags.trace {
+		log.Print("tracing enabled")
+	}
+	if *rootFlags.noDigimodes {
+		log.Print("no_digimodes: using LSB/USB instead of DIGL/DIGU")
+	}
 	tciHost, err := parseTCPAddrArg(*rootFlags.tciHost, "localhost", 40001)
 	if err != nil {
 		log.Fatalf("invalid tci_host: %v", err)
@@ -59,7 +67,7 @@ func root(cmd *cobra.Command, args []string) {
 	signal.Notify(signals, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go handleCancelation(signals, cancel)
 
-	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.trace)
+	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.trace, *rootFlags.noDigimodes)
 	if err != nil {
 		log.Fatalf("starting the adapter failed: %v", err)
 	}
