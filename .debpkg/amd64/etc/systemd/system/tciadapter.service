@@ -1,0 +1,8 @@
+[Unit]
+Description=TCI-Hamlib Adapter
+
+[Service]
+ExecStart=/usr/bin/tciadapter -l localhost:4532 -t localhost:40001 -d
+
+[Install]
+WantedBy=multi-user.target
