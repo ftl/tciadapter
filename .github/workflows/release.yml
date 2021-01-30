@@ -48,7 +48,7 @@ jobs:
         mkdir -p ./.debpkg/amd64/usr/bin
         cp ./bin/tciadapter ./.debpkg/amd64/usr/bin/tciadapter
         chmod +x ./.debpkg/amd64/usr/bin/tciadapter
-        mkdir -p ./.debpkg/amrhf/usr/bin
+        mkdir -p ./.debpkg/armhf/usr/bin
         cp ./bin/pitciadapter ./.debpkg/armhf/usr/bin/tciadapter
         chmod +x ./.debpkg/armhf/usr/bin/tciadapter
 
