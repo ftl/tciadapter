@@ -1,0 +1,9 @@
+Package: tciadapter
+Architecture: armhf
+Section: universe/hamradio
+Priority: optional
+Version: !THE_VERSION!
+Maintainer: Florian Thienel/DL3NEY <ftl@thecodingflow.com>
+Homepage: https://github.com/ftl/tciadapter
+Bugs: https://github.com/ftl/tciadapter/issues
+Description: The TCI-Hamlib Adapter connects Hamlib-based software with radios using the TCI protocol.

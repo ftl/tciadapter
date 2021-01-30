@@ -45,6 +45,8 @@ github.com/ftl/rigproxy v0.0.0-20210129152621-d47864ba93b5 h1:OkwFnk+oYYvR5wS0GC
 github.com/ftl/rigproxy v0.0.0-20210129152621-d47864ba93b5/go.mod h1:o1dorJdOg75DZWauLQMQod4Ntwhniiux6fPd/eRRmrk=
 github.com/ftl/tci v0.0.0-20210129164933-ae2a3edfc07b h1:JCKGA1gE5Y/JNY5pn/Yp0dvNdbcXKWAppl81RID+xYU=
 github.com/ftl/tci v0.0.0-20210129164933-ae2a3edfc07b/go.mod h1:QfLghyCZMWVh2+M8w7R//gnjkhCoXtKpPeSD4uyhhhs=
+github.com/ftl/tci v0.0.0-20210130141754-2ffe755d9f40 h1:URk93ezbEoZgYDG6LTSlkgyZoq6ecWa/0f8flTowqtw=
+github.com/ftl/tci v0.0.0-20210130141754-2ffe755d9f40/go.mod h1:QfLghyCZMWVh2+M8w7R//gnjkhCoXtKpPeSD4uyhhhs=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
