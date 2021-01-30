@@ -8,7 +8,7 @@ Currently the adapter works with the following applications:
 * [FLDigi](http://www.w1hkj.com/)
 * [WSJT-X](https://www.physics.princeton.edu/pulsar/k1jt/wsjtx.html)
 
-I develop and test the TCI-Hamlib Adapter on Linux, but it can also be build for MacOS and Windows.
+I develop and test the TCI-Hamlib Adapter on a Linux PC, but I also provide binaries for Raspberry Pi and Windows.
 
 ## Usage
 
@@ -33,15 +33,19 @@ This tool is written in [Go](https://golang.org), so you need the latest Go on y
 go build
 ```
 
-## Install
+## Install on Debian-based Linux
 
-To install the CLI client application, simply use the `go install` command:
+* Download the latest .deb package from [Releases](https://github.com/ftl/tciadapter/releases/latest),
+* Install the package using `sudo apt install ./tciadapter_<version>_<arch>.deb` (of course, use the name of the file that you downloaded...).
 
-```
-go install github.com/ftl/tciadapter
-```
+For more information about how to use the CLI client application, simply run the command `tciadapter --help`. 
 
-For more information about how to use the CLI client application, simply run the command `tciadapter --help`.
+The deb package also installs a systemd unit that runs the tciadapter as service. This unit is disabled by default. To run tciadapter automatically as service:
+
+* Edit `/etc/systemd/system/tciadapter.service` to your needs,
+* `sudo systemctl daemon-reload`
+* `sudo systemctl enable tciadapter.service`
+* `sudo systemctl start tciadapter.service`
 
 ## License
 This software is published under the [MIT License](https://www.tldrlegal.com/l/mit).
