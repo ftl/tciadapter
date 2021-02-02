@@ -14,11 +14,14 @@ I develop and test the TCI-Hamlib Adapter on a Linux PC, but I also provide bina
 
 The TCI-Hamlib Adapter is a command-line application. It has the following parameters:
 
+```
   -h, --help                   help for tciadapter
   -l, --local_address string   Use this local address to listen for incoming Hamlib connections (default "localhost:4532")
+  -d, --no_digimodes           Use LSB/USB instead of the digital modes DIGL/DIGU
   -r, --reconnect              Automatically try to reconnect if the connection fails
   -t, --tci_host string        Connect the adapter to this TCI host (default "localhost:40001")
   -x, --trx int                Use this TRX of the TCI host
+```
 
 When there are no parameters given, the adapter uses both for Hamlib and TCI the default ports. If all your applications run on the same machine, using the default ports, this is the way to go:
 
