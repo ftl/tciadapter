@@ -18,7 +18,6 @@ The TCI-Hamlib Adapter is a command-line application. It has the following param
   -h, --help                   help for tciadapter
   -l, --local_address string   Use this local address to listen for incoming Hamlib connections (default "localhost:4532")
   -d, --no_digimodes           Use LSB/USB instead of the digital modes DIGL/DIGU
-  -r, --reconnect              Automatically try to reconnect if the connection fails
   -t, --tci_host string        Connect the adapter to this TCI host (default "localhost:40001")
   -x, --trx int                Use this TRX of the TCI host
 ```
