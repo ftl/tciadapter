@@ -49,6 +49,23 @@ The deb package also installs a systemd unit that runs the tciadapter as service
 * `sudo systemctl enable tciadapter.service`
 * `sudo systemctl start tciadapter.service`
 
+## Install as a Windows service
+
+* Download the latest Windows executable from [Releases](https://github.com/ftl/tciadapter/releases/latest),
+* Unzip the package to your hard disk,
+* Open a command line window with administrator permissions ("run as administrator"),
+* Go into the directory where you unzipped `tciadapter.exe`,
+* Run `tciadapter install` to install the service,
+* Run `net start tciadapter` to start the service.
+
+You can add all the required configuration paramters to the `tciadapter install` command: 
+
+```
+tciadapter install -l :4554 -t 10.20.30.40:41001 -x 1 --no_datamodes
+```
+
+In this (admittedly extreme) example the service will listen on port 4554 and connect to ExpertSDR running on the host with the IP address 10.20.30.40 on port 41001, it will control the second receiver and will LSB/USB instead of the data modes.
+
 ## License
 This software is published under the [MIT License](https://www.tldrlegal.com/l/mit).
 
