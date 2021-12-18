@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package cmd
@@ -72,8 +73,11 @@ func install(cmd *cobra.Command, args []string) {
 		"-t", *rootFlags.tciHost,
 		"-x", strconv.Itoa(*rootFlags.trx),
 	}
-	if *rootFlags.trace {
-		serviceArgs = append(serviceArgs, "--trace")
+	if *rootFlags.traceHamlib {
+		serviceArgs = append(serviceArgs, "--trace_hamlib")
+	}
+	if *rootFlags.traceTCI {
+		serviceArgs = append(serviceArgs, "--trace_tci")
 	}
 	if *rootFlags.noDigimodes {
 		serviceArgs = append(serviceArgs, "-d")
@@ -173,8 +177,11 @@ func (s *serviceHandler) Execute(args []string, requests <-chan svc.ChangeReques
 	const cmdsAccepted = svc.AcceptStop | svc.AcceptShutdown
 	changes <- svc.Status{State: svc.StartPending}
 
-	if *rootFlags.trace {
-		log.Print("tracing enabled")
+	if *rootFlags.traceHamlib {
+		log.Print("hamlib tracing enabled")
+	}
+	if *rootFlags.traceTCI {
+		log.Print("TCI tracing enabled")
 	}
 	if *rootFlags.noDigimodes {
 		log.Print("no_digimodes: using LSB/USB instead of DIGL/DIGU")
@@ -188,7 +195,7 @@ func (s *serviceHandler) Execute(args []string, requests <-chan svc.ChangeReques
 	}
 	done := make(chan struct{})
 
-	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, done, *rootFlags.trace, *rootFlags.noDigimodes)
+	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, done, *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes)
 	if err != nil {
 		log.Fatalf("starting the adapter failed: %v", err)
 	}

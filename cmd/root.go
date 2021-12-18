@@ -21,7 +21,8 @@ var rootFlags = struct {
 	localAddress *string
 	tciHost      *string
 	trx          *int
-	trace        *bool
+	traceHamlib  *bool
+	traceTCI     *bool
 	noDigimodes  *bool
 }{}
 
@@ -42,14 +43,18 @@ func init() {
 	rootFlags.localAddress = rootCmd.PersistentFlags().StringP("local_address", "l", ":4532", "Use this local address to listen for incoming Hamlib connections")
 	rootFlags.tciHost = rootCmd.PersistentFlags().StringP("tci_host", "t", "localhost:40001", "Connect the adapter to this TCI host")
 	rootFlags.trx = rootCmd.PersistentFlags().IntP("trx", "x", 0, "Use this TRX of the TCI host")
-	rootFlags.trace = rootCmd.PersistentFlags().BoolP("trace", "", false, "Trace the Hamlib set commands on the console")
+	rootFlags.traceHamlib = rootCmd.PersistentFlags().BoolP("trace_hamlib", "", false, "Trace the Hamlib set commands on the console")
+	rootFlags.traceTCI = rootCmd.PersistentFlags().BoolP("trace_tci", "", false, "Trace the TCI communication on the console")
 	rootFlags.noDigimodes = rootCmd.PersistentFlags().BoolP("no_digimodes", "d", false, "Use LSB/USB instead of the digital modes DIGL/DIGU")
 }
 
 func root(cmd *cobra.Command, args []string) {
 	log.Printf("TCI-Hamlib Adapter %s", cmd.Version)
-	if *rootFlags.trace {
-		log.Print("tracing enabled")
+	if *rootFlags.traceHamlib {
+		log.Print("hamlib tracing enabled")
+	}
+	if *rootFlags.traceTCI {
+		log.Print("TCI tracing enabled")
 	}
 	if *rootFlags.noDigimodes {
 		log.Print("no_digimodes: using LSB/USB instead of DIGL/DIGU")
@@ -67,7 +72,7 @@ func root(cmd *cobra.Command, args []string) {
 	signal.Notify(signals, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go handleCancelation(signals, cancel)
 
-	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.trace, *rootFlags.noDigimodes)
+	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes)
 	if err != nil {
 		log.Fatalf("starting the adapter failed: %v", err)
 	}

@@ -15,7 +15,7 @@ import (
 	tci "github.com/ftl/tci/client"
 )
 
-func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan struct{}, trace bool, noDigimodes bool) (*Adapter, error) {
+func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan struct{}, traceHamlib, traceTCI bool, noDigimodes bool) (*Adapter, error) {
 	listener, err := net.Listen("tcp", localAddress)
 	if err != nil {
 		return nil, fmt.Errorf("cannot open local port %s: %w", localAddress, err)
@@ -25,10 +25,11 @@ func Listen(localAddress string, tciHost *net.TCPAddr, trx int, done <-chan stru
 		listener:    listener,
 		trxData:     newTRXData(trx),
 		closed:      make(chan struct{}),
-		trace:       trace,
+		traceHamlib: traceHamlib,
+		traceTCI:    traceTCI,
 		noDigimodes: noDigimodes,
 	}
-	result.tciClient = tci.KeepOpen(tciHost, 10*time.Second)
+	result.tciClient = tci.KeepOpen(tciHost, 10*time.Second, traceTCI)
 	result.tciClient.Notify(result.trxData)
 
 	go result.run()
@@ -52,7 +53,8 @@ type Adapter struct {
 	tciClient   *tci.Client
 	trxData     *TRXData
 	closed      chan struct{}
-	trace       bool
+	traceHamlib bool
+	traceTCI    bool
 	noDigimodes bool
 }
 
@@ -77,7 +79,7 @@ func (a *Adapter) run() {
 			trxData:       a.trxData,
 			adapterClosed: a.closed,
 			closed:        make(chan struct{}),
-			trace:         a.trace,
+			trace:         a.traceHamlib,
 			noDigimodes:   a.noDigimodes,
 		}
 		go conn.run()
