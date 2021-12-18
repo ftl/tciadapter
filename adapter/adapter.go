@@ -133,7 +133,7 @@ func (c *inboundConnection) run() {
 		}
 
 		resp, err := c.handleRequest(req)
-		if strings.HasPrefix(string(req.Key()), "set_") && errors.Is(err, tci.ErrReadTimeout) {
+		if strings.HasPrefix(string(req.Key()), "set_") && errors.Is(err, tci.ErrTimeout) {
 			resp = protocol.Response{
 				Command: req.Key(),
 				Result:  "0",
