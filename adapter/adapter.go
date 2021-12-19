@@ -148,18 +148,23 @@ func (c *inboundConnection) run() {
 			}
 		}
 
+		var response string
 		if req.ExtendedSeparator != "" {
-			fmt.Fprintln(c.conn, resp.ExtendedFormat(req.ExtendedSeparator))
+			response = resp.ExtendedFormat(req.ExtendedSeparator)
 		} else {
-			fmt.Fprintln(c.conn, resp.Format())
+			response = resp.Format()
 		}
+		if c.trace {
+			log.Printf("> %s", response)
+		}
+		fmt.Fprintln(c.conn, response)
 	}
 }
 
 func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Response, error) {
 	key := string(req.Key())
-	if c.trace && strings.HasPrefix(key, "set_") {
-		log.Printf("%s", req.LongFormat())
+	if c.trace {
+		log.Printf("< %s", req.LongFormat())
 	}
 	switch key {
 	case "chk_vfo":
@@ -188,7 +193,11 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 		if len(req.Args) < 1 {
 			return protocol.NoResponse, fmt.Errorf("set_freq: no arguments")
 		}
-		c.trxData.currentVFO = map[hamlib.VFO]tci.VFO{hamlib.VFOA: tci.VFOA, hamlib.VFOB: tci.VFOB}[hamlib.VFO(req.Args[0])]
+		vfo, ok := hamlibToTCIVFO[hamlib.VFO(req.Args[0])]
+		if !ok {
+			return protocol.NoResponse, fmt.Errorf("set_vfo: unknown VFO %s", req.Args[0])
+		}
+		c.trxData.currentVFO = vfo
 		return protocol.OKResponse(req.Key()), nil
 	case "get_mode":
 		mode := tciToHamlibMode[c.trxData.Mode()]
@@ -293,8 +302,10 @@ func (c *inboundConnection) Close() {
 }
 
 var hamlibToTCIVFO = map[hamlib.VFO]tci.VFO{
-	hamlib.VFOA: tci.VFOA,
-	hamlib.VFOB: tci.VFOB,
+	hamlib.VFOA:    tci.VFOA,
+	hamlib.VFOB:    tci.VFOB,
+	hamlib.MainVFO: tci.VFOA,
+	hamlib.SubVFO:  tci.VFOB,
 }
 
 var tciToHamlibVFO = map[tci.VFO]hamlib.VFO{
