@@ -274,6 +274,24 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 			return protocol.NoResponse, fmt.Errorf("set_ptt: cannot send TCI command: %w", err)
 		}
 		return protocol.OKResponse(req.Key()), nil
+	case "send_morse":
+		if len(req.Args) < 1 {
+			return protocol.NoResponse, fmt.Errorf("send_morse: no arguments")
+		}
+		err := c.tciClient.SendCWMacro(c.trxData.trx, req.Args[0])
+		if err != nil && err != tci.ErrTimeout {
+			return protocol.NoResponse, fmt.Errorf("send_morse: cannot send TCI command: %w", err)
+		}
+		return protocol.OKResponse(req.Key()), nil
+	case "stop_morse":
+		err := c.tciClient.StopCW()
+		if err != nil && err != tci.ErrTimeout {
+			return protocol.NoResponse, fmt.Errorf("stop_morse: cannot send TCI command: %w", err)
+		}
+		return protocol.OKResponse(req.Key()), nil
+	case "wait_morse":
+		c.trxData.WaitForTransmissionEnd()
+		return protocol.OKResponse(req.Key()), nil
 	default:
 		return protocol.NoResponse, fmt.Errorf("unsupported request: %v", req.LongFormat())
 	}

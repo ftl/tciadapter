@@ -120,8 +120,8 @@ github.com/ftl/hamradio v0.0.0-20200721200456-334cc249f095/go.mod h1:Gyec2UUjJF0
 github.com/ftl/hamradio v0.0.0-20210620180211-c5cf51256994 h1:TJTm744A3PZ4T2TMQjj8wJz6gjlhKwJf3rM4PuZVPZg=
 github.com/ftl/hamradio v0.0.0-20210620180211-c5cf51256994/go.mod h1:Gyec2UUjJF0AG3bIoMnsEF/aP8FExb1BgqyY7IohODs=
 github.com/ftl/localcopy v0.0.0-20190616142648-8915fb81f0d9/go.mod h1:4sZLCxjgn++exy5u0muVzlvnahfanPuiHLQo0GJQnPA=
-github.com/ftl/rigproxy v0.0.0-20211219151920-456817ac2a55 h1:CRQG9PL8zMQAo6f3hYYrn/iY2JJRtZgxjH7HyV1nBlA=
-github.com/ftl/rigproxy v0.0.0-20211219151920-456817ac2a55/go.mod h1:3X0MLMrmbrglHCw0EUWVtYah15LY+Xgfh8NbynYzpVg=
+github.com/ftl/rigproxy v0.0.0-20211222110853-35af91f708ae h1:k5/03Sjk2deDasxkQQMOv7HTY50JLu1rYv+dLdiH01w=
+github.com/ftl/rigproxy v0.0.0-20211222110853-35af91f708ae/go.mod h1:3X0MLMrmbrglHCw0EUWVtYah15LY+Xgfh8NbynYzpVg=
 github.com/ftl/tci v0.2.0 h1:sg79s8CeBQLscyI5WJ9Z6aFIEZBNoepaLT4eSAMjHww=
 github.com/ftl/tci v0.2.0/go.mod h1:QfLghyCZMWVh2+M8w7R//gnjkhCoXtKpPeSD4uyhhhs=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=

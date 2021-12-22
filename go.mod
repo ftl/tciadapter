@@ -4,10 +4,10 @@ go 1.17
 
 //replace github.com/ftl/tci => ../tci
 
-//replace github.com/ftl/rigproxy => ../rigproxy
+// replace github.com/ftl/rigproxy => ../rigproxy
 
 require (
-	github.com/ftl/rigproxy v0.0.0-20211219151920-456817ac2a55
+	github.com/ftl/rigproxy v0.0.0-20211222110853-35af91f708ae
 	github.com/ftl/tci v0.2.0
 	github.com/spf13/cobra v1.3.0
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e

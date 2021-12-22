@@ -1,11 +1,16 @@
 package adapter
 
-import tci "github.com/ftl/tci/client"
+import (
+	"sync"
+
+	tci "github.com/ftl/tci/client"
+)
 
 func newTRXData(trx int) *TRXData {
 	return &TRXData{
-		trx:  trx,
-		vfos: make(map[tci.VFO]vfoData),
+		trx:    trx,
+		vfos:   make(map[tci.VFO]vfoData),
+		txSync: new(sync.WaitGroup),
 	}
 }
 
@@ -22,6 +27,7 @@ type TRXData struct {
 	rxFilterMax  int
 	splitEnabled bool
 	transmitting bool
+	txSync       *sync.WaitGroup
 }
 
 func (t *TRXData) CurrentVFO() tci.VFO {
@@ -85,9 +91,21 @@ func (t *TRXData) SetTX(trx int, enabled bool) {
 	if trx != t.trx {
 		return
 	}
+	if t.transmitting == enabled {
+		return
+	}
 	t.transmitting = enabled
+	if enabled {
+		t.txSync.Add(1)
+	} else {
+		t.txSync.Done()
+	}
 }
 
 func (t *TRXData) TX() bool {
 	return t.transmitting
+}
+
+func (t *TRXData) WaitForTransmissionEnd() {
+	t.txSync.Wait()
 }
