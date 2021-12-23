@@ -162,9 +162,9 @@ func (c *inboundConnection) run() {
 }
 
 func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Response, error) {
-	key := string(req.Key())
+	key := strings.ToLower(string(req.Key()))
 	if c.trace {
-		log.Printf("< %s", req.LongFormat())
+		log.Printf("< %s (%s)", req.LongFormat(), key)
 	}
 	switch key {
 	case "chk_vfo":
@@ -279,18 +279,31 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 			return protocol.NoResponse, fmt.Errorf("send_morse: no arguments")
 		}
 		err := c.tciClient.SendCWMacro(c.trxData.trx, req.Args[0])
-		if err != nil && err != tci.ErrTimeout {
+		if err != nil {
 			return protocol.NoResponse, fmt.Errorf("send_morse: cannot send TCI command: %w", err)
 		}
 		return protocol.OKResponse(req.Key()), nil
 	case "stop_morse":
 		err := c.tciClient.StopCW()
-		if err != nil && err != tci.ErrTimeout {
+		if err != nil {
 			return protocol.NoResponse, fmt.Errorf("stop_morse: cannot send TCI command: %w", err)
 		}
 		return protocol.OKResponse(req.Key()), nil
 	case "wait_morse":
 		c.trxData.WaitForTransmissionEnd()
+		return protocol.OKResponse(req.Key()), nil
+	case "set_level_keyspd":
+		if len(req.Args) < 2 {
+			return protocol.NoResponse, fmt.Errorf("set_level: no arguments")
+		}
+		wpm, err := strconv.Atoi(req.Args[1])
+		if err != nil {
+			return protocol.NoResponse, fmt.Errorf("set_level: invalid keyer speed in WPM: %w", err)
+		}
+		err = c.tciClient.SetCWMacrosSpeed(wpm)
+		if err != nil {
+			return protocol.NoResponse, fmt.Errorf("set_level: cannot send TCI command: %w", err)
+		}
 		return protocol.OKResponse(req.Key()), nil
 	default:
 		return protocol.NoResponse, fmt.Errorf("unsupported request: %v", req.LongFormat())
