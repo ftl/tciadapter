@@ -55,7 +55,7 @@ func service(cmd *cobra.Command, args []string) {
 	}
 	log.Print("running as Windows service")
 
-	err = svc.Run(serviceName, new(serviceHandler))
+	err = svc.Run(serviceName, &serviceHandler{version: cmd.Version})
 }
 
 func install(cmd *cobra.Command, args []string) {
@@ -171,7 +171,9 @@ func exePath() (string, error) {
 	return "", err
 }
 
-type serviceHandler struct{}
+type serviceHandler struct {
+	version string
+}
 
 func (s *serviceHandler) Execute(args []string, requests <-chan svc.ChangeRequest, changes chan<- svc.Status) (ssec bool, errno uint32) {
 	const cmdsAccepted = svc.AcceptStop | svc.AcceptShutdown
@@ -195,7 +197,7 @@ func (s *serviceHandler) Execute(args []string, requests <-chan svc.ChangeReques
 	}
 	done := make(chan struct{})
 
-	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, done, *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes)
+	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, done, *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes, s.version)
 	if err != nil {
 		log.Fatalf("starting the adapter failed: %v", err)
 	}
