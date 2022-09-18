@@ -72,7 +72,7 @@ func root(cmd *cobra.Command, args []string) {
 	signal.Notify(signals, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go handleCancelation(signals, cancel)
 
-	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes)
+	adapter, err := adapter.Listen(*rootFlags.localAddress, tciHost, *rootFlags.trx, ctx.Done(), *rootFlags.traceHamlib, *rootFlags.traceTCI, *rootFlags.noDigimodes, cmd.Version)
 	if err != nil {
 		log.Fatalf("starting the adapter failed: %v", err)
 	}
