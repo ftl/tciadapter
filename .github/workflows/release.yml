@@ -13,10 +13,10 @@ jobs:
     - id: version_number
       run: echo "::set-output name=version_number::$(echo '${{github.ref}}' | sed -E 's#refs/tags/v##')"
  
-    - name: Set up Go 1.15
+    - name: Set up Go 1.19
       uses: actions/setup-go@v2
       with:
-        go-version: 1.15
+        go-version: 1.19
       id: go
 
     - name: Check out code into the Go module directory
