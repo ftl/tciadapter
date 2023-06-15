@@ -120,6 +120,7 @@ type inboundConnection struct {
 	trace         bool
 	noDigimodes   bool
 	version       string
+	modeLocked    bool
 }
 
 func (c *inboundConnection) run() {
@@ -213,6 +214,9 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 	case "set_mode":
 		if len(req.Args) < 2 {
 			return protocol.NoResponse, fmt.Errorf("set_mode: no arguments")
+		}
+		if c.modeLocked {
+			return protocol.OKResponse(req.Key()), nil
 		}
 		mode := c.overrideDigimode(hamlibToTCIMode[hamlib.Mode(req.Args[0])])
 		// passband, err := strconv.Atoi(req.Args[1]) // TODO also take the passband into account
@@ -311,6 +315,20 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 			return protocol.NoResponse, fmt.Errorf("set_level: cannot send TCI command: %w", err)
 		}
 		return protocol.OKResponse(req.Key()), nil
+	case "get_level_keyspd":
+		wpm, err := c.tciClient.CWMacrosSpeed()
+		if err != nil {
+			return protocol.NoResponse, fmt.Errorf("get_level: cannot send TCI command: %w", err)
+		}
+		return protocol.GetLevelKeyspdResponse(wpm), nil
+	case "set_lock_mode":
+		if len(req.Args) < 1 {
+			return protocol.NoResponse, fmt.Errorf("set_lock_mode: no arguments")
+		}
+		c.modeLocked = (req.Args[0] == "1")
+		return protocol.OKResponse(req.Key()), nil
+	case "get_lock_mode":
+		return protocol.GetPTTResponse(c.modeLocked), nil
 	default:
 		log.Printf("unsupported request: %v", req.LongFormat())
 		return notImplementedResponse(req.Key()), nil

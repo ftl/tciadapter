@@ -2,8 +2,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46t
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/ftl/hamradio v0.2.6 h1:AEgTLhoqYCZDg7pCZMeRFZYJPSoXTp4TEK65lBEcP2o=
 github.com/ftl/hamradio v0.2.6/go.mod h1:FOZkf8liaM/H8F8Vyp36EN9iVzikKpaOJ5AqrW77cEo=
-github.com/ftl/rigproxy v0.2.0 h1:CHdoFJM2wWx9IkM6jQEBMAbL7WeQiriR6AC0RNncuK0=
-github.com/ftl/rigproxy v0.2.0/go.mod h1:3X0MLMrmbrglHCw0EUWVtYah15LY+Xgfh8NbynYzpVg=
+github.com/ftl/rigproxy v0.2.3 h1:xXC5BweI8SZCrnt+UFLrR5F0tpXPdPUwCBH5RKys3GM=
+github.com/ftl/rigproxy v0.2.3/go.mod h1:PrBUiqLwu/6zL44+uOz4lgmOfnis4FIvJDhxDNXoi60=
 github.com/ftl/tci v0.3.1 h1:Njtb38PzkVYbW9zlr4Babl6+frQBsCLWNEZDvxxUTzQ=
 github.com/ftl/tci v0.3.1/go.mod h1:3B8x8FI/kBbUwbWnz725tTiiiNfJpIL9cQ67TnjW3aU=
 github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWmnc=
