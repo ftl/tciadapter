@@ -207,7 +207,16 @@ func (c *inboundConnection) handleRequest(req protocol.Request) (protocol.Respon
 		c.trxData.currentVFO = vfo
 		return protocol.OKResponse(req.Key()), nil
 	case "get_mode":
-		mode := tciToHamlibMode[c.trxData.Mode()]
+		// Always query TCI server for current mode (EESDR doesn't send modulation notifications)
+		tciMode, err := c.tciClient.Mode(c.trxData.trx)
+		if err != nil {
+			return protocol.NoResponse, fmt.Errorf("get_mode: cannot get mode from TCI: %w", err)
+		}
+		c.trxData.SetMode(c.trxData.trx, tciMode)
+		mode := tciToHamlibMode[tciMode]
+		if c.trace {
+			log.Printf("get_mode: tciMode='%s' -> hamlibMode='%s'", tciMode, mode)
+		}
 		min, max := c.trxData.RXFilterBand()
 		passband := max - min
 		return protocol.GetModeResponse(string(mode), passband), nil
@@ -390,6 +399,7 @@ var hamlibToTCIMode = map[hamlib.Mode]tci.Mode{
 }
 
 var tciToHamlibMode = map[tci.Mode]hamlib.Mode{
+	"":           hamlib.ModeUSB, // Default if mode not set
 	tci.ModeAM:   hamlib.ModeAM,
 	tci.ModeSAM:  hamlib.ModeSAM,
 	tci.ModeDSB:  hamlib.ModeDSB,
@@ -400,6 +410,17 @@ var tciToHamlibMode = map[tci.Mode]hamlib.Mode{
 	tci.ModeWFM:  hamlib.ModeWFM,
 	tci.ModeDIGL: hamlib.ModePKTLSB,
 	tci.ModeDIGU: hamlib.ModePKTUSB,
+	// Add uppercase variants for TCI servers that send uppercase mode strings
+	"AM":   hamlib.ModeAM,
+	"SAM":  hamlib.ModeSAM,
+	"DSB":  hamlib.ModeDSB,
+	"LSB":  hamlib.ModeLSB,
+	"USB":  hamlib.ModeUSB,
+	"CW":   hamlib.ModeCW,
+	"NFM":  hamlib.ModeFM,
+	"WFM":  hamlib.ModeWFM,
+	"DIGL": hamlib.ModePKTLSB,
+	"DIGU": hamlib.ModePKTUSB,
 }
 
 func notImplementedResponse(cmd protocol.CommandKey) protocol.Response {
