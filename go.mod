@@ -8,7 +8,7 @@ go 1.19
 
 require (
 	github.com/ftl/rigproxy v0.2.3
-	github.com/ftl/tci v0.3.1
+	github.com/ftl/tci v0.3.3
 	github.com/spf13/cobra v1.6.1
 	golang.org/x/sys v0.5.0
 )
