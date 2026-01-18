@@ -2,62 +2,61 @@ name: CI-Build
 
 on:
   push:
-    branches: 
-    - master
-    - "**"
+    branches:
+      - master
+      - "**"
   pull_request:
-    branches: 
-    - master
+    branches:
+      - master
 
 jobs:
-
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-25.10
     steps:
-    - name: Set up Go 1.19
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.19
-      id: go
+      - name: Set up Go 1.25
+        uses: actions/setup-go@v6
+        with:
+          go-version: 1.25
+        id: go
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-        
-    - name: Caching build artifacts and modules
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/go/pkg/mod
-          ~/.cache/go-build
-        key: ${{ runner.os }}-go-modules-${{ hashFiles('**/go.sum') }}
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v6
 
-    - name: Get dependencies
-      run: go get -v -t -d ./...
+      - name: Caching build artifacts and modules
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-modules-${{ hashFiles('**/go.sum') }}
 
-    - name: Build
-      run: | 
-        GOOS=linux GOARCH=386 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/tciadapter main.go
-        GOOS=linux GOARCH=arm GOARM=5 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/pitciadapter main.go
-        GOOS=windows GOARCH=386 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/tciadapter.exe main.go
+      - name: Get dependencies
+        run: go get -v -t -d ./...
 
-    - name: Test
-      run: go test -v -timeout=30s ./...
-      
-    - name: 'Upload binary for linux_amd64'
-      uses: actions/upload-artifact@v2
-      with:
-        name: tciadapter-binary-linux_amd64
-        path: ./bin/tciadapter
+      - name: Build
+        run: |
+          GOOS=linux GOARCH=386 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/tciadapter main.go
+          GOOS=linux GOARCH=arm GOARM=5 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/pitciadapter main.go
+          GOOS=windows GOARCH=386 go build -v -ldflags "-X main.version=$GITHUB_SHA" -o ./bin/tciadapter.exe main.go
 
-    - name: 'Upload binary for linux_armhf'
-      uses: actions/upload-artifact@v2
-      with:
-        name: tciadapter-binary-linux_armhf
-        path: ./bin/pitciadapter
+      - name: Test
+        run: go test -v -timeout=30s ./...
 
-    - name: 'Upload binary for windows'
-      uses: actions/upload-artifact@v2
-      with:
-        name: tciadapter-binary-windows
-        path: ./bin/tciadapter.exe
+      - name: "Upload binary for linux_amd64"
+        uses: actions/upload-artifact@v6
+        with:
+          name: tciadapter-binary-linux_amd64
+          path: ./bin/tciadapter
+
+      - name: "Upload binary for linux_armhf"
+        uses: actions/upload-artifact@v6
+        with:
+          name: tciadapter-binary-linux_armhf
+          path: ./bin/pitciadapter
+
+      - name: "Upload binary for windows"
+        uses: actions/upload-artifact@v6
+        with:
+          name: tciadapter-binary-windows
+          path: ./bin/tciadapter.exe
