@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-25.10
+    runs-on: ubuntu-slim
     steps:
       - name: Set up Go 1.25
         uses: actions/setup-go@v6
