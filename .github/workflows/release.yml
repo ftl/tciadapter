@@ -69,7 +69,7 @@ jobs:
         run: echo "::set-output name=package_filename::$(ls ./tciadapter*armhf.deb | head -n 1)"
 
       - name: "Upload package for linux_amd64"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v6
         with:
           name: tciadapter-package-linux_amd64
           path: ./tciadapter*amd64.deb
