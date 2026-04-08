@@ -1,6 +1,6 @@
 module github.com/ftl/tciadapter
 
-go 1.19
+go 1.26
 
 // replace github.com/ftl/tci => ../tci
 
